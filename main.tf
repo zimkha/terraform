@@ -45,39 +45,39 @@ module "vpc" {
   enable_vpn_gateway = false
 
   tags = {
-    project     = "project-alpha",
+    project     = "mmd-zimkha",
     environment = "dev"
   }
 }
 
 module "app_security_group" {
-  source  = "terraform-aws-modules/security-group/aws//modules/web"
-  version = "4.17.0"
+  source      = "terraform-aws-modules/security-group/aws//modules/web"
+  version     = "4.17.0"
 
-  name        = "web-sg-project-alpha-dev"
+  name        = "web-sg-mmd-zimkha-dev"
   description = "Security group for web-servers with HTTP ports open within VPC"
   vpc_id      = module.vpc.vpc_id
 
   ingress_cidr_blocks = module.vpc.public_subnets_cidr_blocks
 
   tags = {
-    project     = "project-alpha",
+    project     = "mmd-zimkha",
     environment = "dev"
   }
 }
 
 module "lb_security_group" {
-  source  = "terraform-aws-modules/security-group/aws//modules/web"
-  version = "4.17.0"
+  source      = "terraform-aws-modules/security-group/aws//modules/web"
+  version     = "4.17.0"
 
-  name        = "lb-sg-project-alpha-dev"
+  name        = "lb-sg-mmd-zimkha-dev"
   description = "Security group for load balancer with HTTP ports open within VPC"
   vpc_id      = module.vpc.vpc_id
 
   ingress_cidr_blocks = ["0.0.0.0/0"]
 
   tags = {
-    project     = "project-alpha",
+    project     = "mmd-zimkha",
     environment = "dev"
   }
 }
@@ -88,16 +88,16 @@ resource "random_string" "lb_id" {
 }
 
 module "elb_http" {
-  source  = "terraform-aws-modules/elb/aws"
-  version = "4.0.1"
+  source      = "terraform-aws-modules/elb/aws"
+  version     = "4.0.1"
 
   # Ensure load balancer name is unique
-  name = "lb-${random_string.lb_id.result}-project-alpha-dev"
+  name        = "lb-${random_string.lb_id.result}-mmd-zimkha-dev"
 
-  internal = false
+  internal    = false
 
-  security_groups = [module.lb_security_group.security_group_id]
-  subnets         = module.vpc.public_subnets
+  security_groups     = [module.lb_security_group.security_group_id]
+  subnets             = module.vpc.public_subnets
 
   number_of_instances = length(module.ec2_instances.instance_ids)
   instances           = module.ec2_instances.instance_ids
@@ -118,7 +118,7 @@ module "elb_http" {
   }
 
   tags = {
-    project     = "project-alpha",
+    project     = "mmd-zimkha",
     environment = "dev"
   }
 }
@@ -129,12 +129,12 @@ module "ec2_instances" {
   depends_on = [module.vpc]
 
   instance_count     = 2
-  instance_type      = "t2.micro"
+  instance_type      = var.instance_type
   subnet_ids         = module.vpc.private_subnets[*]
   security_group_ids = [module.app_security_group.security_group_id]
 
   tags = {
-    project     = "project-alpha",
+    project     = "mmd-zimkha",
     environment = "dev"
   }
 }
