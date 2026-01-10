@@ -25,5 +25,5 @@ resource "aws_instance" "app" {
     echo "<html><body><div>Hello, world!</div></body></html>" > /var/www/html/index.html
     EOF
 
-  tags = var.tags
+  tags = var.ec2_instance_tags
 }

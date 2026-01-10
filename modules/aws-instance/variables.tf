@@ -7,7 +7,7 @@ variable "instance_type" {
 variable "instance_count" {
   description = "Number of EC2 instances to deploy"
   type        = number
-  default     = 1
+  default     = 2
 }
 
 variable "subnet_ids" {
@@ -24,6 +24,15 @@ variable "security_group_ids" {
 
 variable "tags" {
   description = "Tags for instances"
-  type        = map
+  type        = map(string)
   default     = {}
+}
+
+variable "ec2_instance_tags" {
+  description = "EC2 Instance Tags"
+  type = map(string)
+  default = {
+    "Name" = "ec2-web"
+    "Tier" = "Web"
+  }
 }
